@@ -4,6 +4,9 @@
 # Written by andi mcc with help from agg23 and whitequark
 # Covered by BSD0 license in src/fpga/amaranth_core/LICENSE.txt
 
+# Usage: python resolution.py WIDTH HEIGHT
+# Then wait for prompt
+
 FRAMERATE_HZ_DEFAULT = 60
 MHZ = 1_000_000
 

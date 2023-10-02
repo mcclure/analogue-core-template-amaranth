@@ -18,33 +18,37 @@ def simulate():
 
 
 def capture_frame():
-    import soundfile
+    import png
     from amaranth.sim import Simulator
 
     top = AppToplevel()
     def bench():
         written = 0
-        while True:
-            cols = []
-            while not (yield top.video_hs): yield
-            while not ((yield top.video_vs) or (yield top.video_de)): yield
-            if (yield top.video_vs):
-                break
+        for _frame in range(2):
+            frame = _frame + 1
+
+            rows = []
             while True:
-                while (yield top.video_rgb_clk90): yield
-                while not (yield top.video_rgb_clk90): yield
-                # at posedge of clk90
-                if (yield top.video_de):
-                    cols.append((yield top.video_rgb.r))
-                    cols.append((yield top.video_rgb.g))
-                    cols.append((yield top.video_rgb.b))
-                else:
+                cols = []
+                while not (yield top.video_hs): yield
+                while not ((yield top.video_vs) or (yield top.video_de)): yield
+                if (yield top.video_vs):
                     break
-            print(f"row {len(rows)}: {len(cols) // 3} cols")
-            rows.append(cols)
-            with open("frame.png", "wb") as file:
-                png.Writer(len(rows[0]) // 3, len(rows), greyscale=False).write(file, rows)
-        print(f"{len(rows)} rows")
+                while True:
+                    while (yield top.video_rgb_clk90): yield
+                    while not (yield top.video_rgb_clk90): yield
+                    # at posedge of clk90
+                    if (yield top.video_de):
+                        cols.append((yield top.video_rgb.r))
+                        cols.append((yield top.video_rgb.g))
+                        cols.append((yield top.video_rgb.b))
+                    else:
+                        break
+                print(f"frame {frame}, row {len(rows)}: {len(cols) // 3} cols")
+                rows.append(cols)
+                with open(f"frame{frame}.png", "wb") as file:
+                    png.Writer(len(rows[0]) // 3, len(rows), greyscale=False).write(file, rows)
+            print(f"frame {frame}, {len(rows)} rows")
 
     sim = Simulator(top)
     sim.add_clock(1/74.25e6)
