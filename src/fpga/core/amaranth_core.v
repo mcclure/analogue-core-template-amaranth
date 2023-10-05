@@ -231,7 +231,7 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
   assign \$112  = audio_output_word_bit ^ audio_high;
   assign \$114  = audgen_silenced ? 1'h0 : \$112 ;
   assign \$116  = audgen_osc_phase < 6'h2e;
-  assign \$11  = video_y_count == 9'h17a;
+  assign \$11  = video_y_count == 9'h15c;
   assign \$119  = audgen_osc_phase + 1'h1;
   assign \$121  = audgen_osc_phase < 6'h2e;
   assign \$124  = audgen_osc_wave + 1'h1;
@@ -331,7 +331,7 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
   assign \$34  = 10'h01d + rotate2_counter_anti;
   assign \$36  = video_y_count <= \$34 ;
   assign \$38  = \$32  & \$36 ;
-  assign \$3  = video_x_count == 9'h197;
+  assign \$3  = video_x_count == 9'h194;
   assign \$40  = video_y_count <= 10'h15c;
   assign \$42  = + video_y_count;
   assign \$44  = 10'h15c - rotate2_counter_anti;
@@ -352,7 +352,7 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
   assign \$70  = + \$71 ;
   assign \$74  = $signed(\$68 ) > $signed(\$70 );
   assign \$77  = rotate1_counter + 1'h1;
-  assign \$7  = video_x_count == 9'h197;
+  assign \$7  = video_x_count == 9'h195;
   assign \$79  = rotate1_counter[0] ^ rotate2_counter[0];
   assign \$81  = video_x_count[0] ^ video_y_count[0];
   assign \$83  = video_x_count[0] ^ video_y_count[0];
