@@ -24,7 +24,9 @@ def capture_frame():
     top = AppToplevel()
     def bench():
         written = 0
-        for _frame in range(2):
+        yield top.cont1_key.eq(0b1000000110010011) # Frame 1: Top/bottom red, left/right blue, upleft/downright green
+
+        for _frame in range(3):
             frame = _frame + 1
 
             rows = []
@@ -42,6 +44,10 @@ def capture_frame():
                         cols.append((yield top.video_rgb.r))
                         cols.append((yield top.video_rgb.g))
                         cols.append((yield top.video_rgb.b))
+
+                        # Frame 2: Left/right red, top/bottom blue, upright/downleft green
+                        # Frame 3: Top red, bottom blue, downright green
+                        yield top.cont1_key.eq(0b0100001001101100 if frame==1 else 0b1000000000100001)
                     else:
                         break
                 print(f"frame {frame}, row {len(rows)}: {len(cols) // 3} cols")

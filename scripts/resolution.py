@@ -106,7 +106,7 @@ VID_V_TOTAL  = {y}
                 "rotation": 0,
                 "mirror": 0
             }}
-        }}
+        ]
     }}
 }}
 

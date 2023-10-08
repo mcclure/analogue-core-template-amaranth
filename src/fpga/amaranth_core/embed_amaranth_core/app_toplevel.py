@@ -44,10 +44,10 @@ class AppToplevel(Toplevel):
         left_half = Signal(1)
         top_half = Signal(1)
         m.d.comb += [
-            bottom_left_diag.eq(video_x_count < video_y_count),
-            top_left_diag.eq(video_x_count < VID_V_ACTIVE-1-video_y_count),
-            left_half.eq(video_x_count < VID_H_ACTIVE//2),
-            top_half.eq(video_y_count < VID_V_ACTIVE//2)
+            bottom_left_diag.eq(video_x_count - VID_H_BPORCH < video_y_count - VID_V_BPORCH),
+            top_left_diag.eq(video_x_count - VID_H_BPORCH < VID_V_ACTIVE-1+VID_V_BPORCH-video_y_count),
+            left_half.eq(video_x_count < VID_H_ACTIVE//2 + VID_H_BPORCH),
+            top_half.eq(video_y_count < VID_V_ACTIVE//2 + VID_V_BPORCH)
         ]
 
         # Ready pixel
@@ -80,28 +80,31 @@ class AppToplevel(Toplevel):
             with m.If(left_half):
                 with m.If(top_half):
                     m.d.sync += [
-                        red_region.eq(CompassRegion.TOP_LEFT)
+                        green_region.eq(CompassRegion.TOP_LEFT)
                     ]
                 with m.Else():
                     m.d.sync += [
-                        red_region.eq(CompassRegion.BOTTOM_LEFT)
+                        green_region.eq(CompassRegion.BOTTOM_LEFT)
                     ]
             with m.Else(): # Right half
                 with m.If(top_half):
                     m.d.sync += [
-                        red_region.eq(CompassRegion.TOP_RIGHT)
+                        green_region.eq(CompassRegion.TOP_RIGHT)
                     ]
                 with m.Else():
                     m.d.sync += [
-                        red_region.eq(CompassRegion.BOTTOM_RIGHT)
+                        green_region.eq(CompassRegion.BOTTOM_RIGHT)
                     ]
 
 
         # New frame logic
-        with m.If(video_vsync_stb):
+        with m.If(video_hsync_stb & (video_y_count == VID_H_BPORCH-1)):
             m.d.sync += cont1_key_latch.eq(self.cont1_key)
 
         # Draw logic
+        def fill(dst, src):
+            assert src.shape().width == 1
+            return dst.eq(src.replicate(dst.shape().width))
         with m.If(video_pixel_stb):            # inactive screen areas must be black
             m.d.sync += [
                 video_rgb_out.eq(0)
@@ -111,31 +114,31 @@ class AppToplevel(Toplevel):
             with m.If(video_active):
                 with m.Switch(red_region): # D-pad
                     with m.Case(DpadRegion.TOP):
-                        m.d.sync += video_rgb_out.r.eq(cont1_key_latch[0])
+                        m.d.sync += fill(video_rgb_out.r, cont1_key_latch[0])
                     with m.Case(DpadRegion.BOTTOM):
-                        m.d.sync += video_rgb_out.r.eq(cont1_key_latch[1])
+                        m.d.sync += fill(video_rgb_out.r, cont1_key_latch[1])
                     with m.Case(DpadRegion.LEFT):
-                        m.d.sync += video_rgb_out.r.eq(cont1_key_latch[2])
+                        m.d.sync += fill(video_rgb_out.r, cont1_key_latch[2])
                     with m.Case(DpadRegion.RIGHT):
-                        m.d.sync += video_rgb_out.r.eq(cont1_key_latch[3])
+                        m.d.sync += fill(video_rgb_out.r, cont1_key_latch[3])
                 with m.Switch(blue_region): # ABXY
                     with m.Case(DpadRegion.RIGHT):
-                        m.d.sync += video_rgb_out.b.eq(cont1_key_latch[4])
+                        m.d.sync += fill(video_rgb_out.b, cont1_key_latch[4])
                     with m.Case(DpadRegion.BOTTOM):
-                        m.d.sync += video_rgb_out.b.eq(cont1_key_latch[5])
+                        m.d.sync += fill(video_rgb_out.b, cont1_key_latch[5])
                     with m.Case(DpadRegion.TOP):
-                        m.d.sync += video_rgb_out.b.eq(cont1_key_latch[6])
+                        m.d.sync += fill(video_rgb_out.b, cont1_key_latch[6])
                     with m.Case(DpadRegion.LEFT):
-                        m.d.sync += video_rgb_out.b.eq(cont1_key_latch[7])
+                        m.d.sync += fill(video_rgb_out.b, cont1_key_latch[7])
                 with m.Switch(green_region):
                     with m.Case(CompassRegion.TOP_LEFT): # Triggers, select, start
-                        m.d.sync += video_rgb_out.g.eq(cont1_key_latch[8])
+                        m.d.sync += fill(video_rgb_out.g, cont1_key_latch[8])
                     with m.Case(CompassRegion.TOP_RIGHT):
-                        m.d.sync += video_rgb_out.g.eq(cont1_key_latch[9])
+                        m.d.sync += fill(video_rgb_out.g, cont1_key_latch[9])
                     with m.Case(CompassRegion.BOTTOM_LEFT):
-                        m.d.sync += video_rgb_out.g.eq(cont1_key_latch[14])
+                        m.d.sync += fill(video_rgb_out.g, cont1_key_latch[14])
                     with m.Case(CompassRegion.BOTTOM_RIGHT):
-                        m.d.sync += video_rgb_out.g.eq(cont1_key_latch[15])
+                        m.d.sync += fill(video_rgb_out.g, cont1_key_latch[15])
 
         # Audio -- Silent
 
