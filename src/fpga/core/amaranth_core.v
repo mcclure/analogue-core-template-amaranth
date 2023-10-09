@@ -3,18 +3,10 @@
 module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_key, cont1_trig, cont2_joy, cont2_key, cont2_trig, cont3_joy, cont3_key, cont3_trig, cont4_joy, cont4_key, cont4_trig, dbg_rx, dbg_tx, init_done, rst, user1
 , user2, video_de, video_hs, video_rgb, video_rgb_clk, video_rgb_clk90, video_skip, video_vs, audio_adc);
   reg \$auto$verilog_backend.cc:2083:dump_module$1  = 0;
-  wire \$101 ;
+  wire [8:0] \$100 ;
+  wire [8:0] \$101 ;
   wire \$103 ;
-  wire \$105 ;
-  wire \$107 ;
-  wire [2:0] \$109 ;
   wire \$11 ;
-  wire [2:0] \$110 ;
-  wire \$112 ;
-  wire \$114 ;
-  wire [8:0] \$116 ;
-  wire [8:0] \$117 ;
-  wire \$119 ;
   wire \$13 ;
   wire \$15 ;
   wire \$17 ;
@@ -23,48 +15,48 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
   wire \$23 ;
   wire \$25 ;
   wire \$27 ;
-  wire \$29 ;
+  wire [10:0] \$29 ;
   wire \$3 ;
   wire [10:0] \$31 ;
-  wire [10:0] \$33 ;
-  wire \$35 ;
-  wire \$37 ;
+  wire \$33 ;
+  wire [10:0] \$35 ;
+  wire [10:0] \$37 ;
   wire \$39 ;
-  wire [7:0] \$41 ;
-  wire [7:0] \$43 ;
-  wire [7:0] \$45 ;
-  wire [7:0] \$47 ;
-  wire [7:0] \$49 ;
+  wire \$41 ;
+  wire \$43 ;
+  wire \$45 ;
+  wire \$47 ;
+  wire \$49 ;
   wire \$5 ;
-  wire [7:0] \$51 ;
-  wire [7:0] \$53 ;
-  wire [7:0] \$55 ;
-  wire [7:0] \$57 ;
-  wire [7:0] \$59 ;
-  wire [7:0] \$61 ;
-  wire [7:0] \$63 ;
-  wire \$65 ;
+  wire \$51 ;
+  wire \$53 ;
+  wire \$55 ;
+  wire [10:0] \$57 ;
+  wire [10:0] \$58 ;
+  wire \$60 ;
+  wire \$62 ;
+  wire [10:0] \$64 ;
+  wire [10:0] \$65 ;
   wire \$67 ;
-  wire \$69 ;
+  wire [22:0] \$69 ;
   wire \$7 ;
-  wire \$71 ;
-  wire [10:0] \$73 ;
-  wire [10:0] \$74 ;
-  wire \$76 ;
-  wire \$78 ;
-  wire [10:0] \$80 ;
-  wire [10:0] \$81 ;
+  wire [22:0] \$70 ;
+  wire [23:0] \$72 ;
+  wire [22:0] \$73 ;
+  wire [23:0] \$75 ;
+  wire \$77 ;
+  wire \$79 ;
+  wire \$81 ;
   wire \$83 ;
-  wire [22:0] \$85 ;
-  wire [22:0] \$86 ;
-  wire [23:0] \$88 ;
-  wire [22:0] \$89 ;
+  wire \$85 ;
+  wire \$87 ;
+  wire \$89 ;
   wire \$9 ;
-  wire [23:0] \$91 ;
-  wire \$93 ;
-  wire \$95 ;
-  wire \$97 ;
-  wire \$99 ;
+  wire \$91 ;
+  wire [2:0] \$93 ;
+  wire [2:0] \$94 ;
+  wire \$96 ;
+  wire \$98 ;
   reg [21:0] audgen_accum = 22'h0b5464;
   reg [21:0] \audgen_accum$next ;
   reg audgen_bit_update_stb;
@@ -130,7 +122,8 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
   wire dbg_rx;
   input dbg_tx;
   wire dbg_tx;
-  wire [1:0] green_region;
+  reg [1:0] green_region = 2'h0;
+  reg [1:0] \green_region$next ;
   output init_done;
   reg init_done = 1'h0;
   wire \init_done$next ;
@@ -175,17 +168,8 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
   reg [9:0] video_y_count = 10'h000;
   reg [9:0] \video_y_count$next ;
   assign \$9  = video_clk_div_stb & \$7 ;
-  assign \$99  = ~ audgen_mclk;
-  assign \$101  = audgen_mclk_stb & \$99 ;
-  assign \$103  = audgen_slck_count == 2'h2;
-  assign \$105  = ~ audgen_mclk;
-  assign \$107  = audgen_mclk_stb & \$105 ;
-  assign \$110  = audgen_slck_count + 1'h1;
-  assign \$112  = ~ audgen_mclk;
-  assign \$114  = audgen_mclk_stb & \$112 ;
-  assign \$117  = audgen_lrck_count + 1'h1;
-  assign \$11  = video_y_count == 9'h15c;
-  assign \$119  = audgen_lrck_internal == 5'h17;
+  assign \$101  = audgen_lrck_count + 1'h1;
+  assign \$103  = audgen_lrck_internal == 5'h17;
   always @(posedge boot_clk)
     init_done <= 1'h1;
   always @(posedge \clk$1 , posedge \rst$2 )
@@ -194,6 +178,9 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
   always @(posedge \clk$1 , posedge \rst$2 )
     if (\rst$2 ) blue_region <= 2'h0;
     else blue_region <= \blue_region$next ;
+  always @(posedge \clk$1 , posedge \rst$2 )
+    if (\rst$2 ) green_region <= 2'h0;
+    else green_region <= \green_region$next ;
   always @(posedge \clk$1 , posedge \rst$2 )
     if (\rst$2 ) cont1_key_latch <= 32'd0;
     else cont1_key_latch <= \cont1_key_latch$next ;
@@ -227,53 +214,54 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
   always @(posedge \clk$1 , posedge \rst$2 )
     if (\rst$2 ) audgen_slck_count <= 2'h3;
     else audgen_slck_count <= \audgen_slck_count$next ;
+  assign \$11  = video_y_count == 9'h185;
   always @(posedge \clk$1 , posedge \rst$2 )
     if (\rst$2 ) audgen_lrck_count <= 8'h00;
     else audgen_lrck_count <= \audgen_lrck_count$next ;
   assign \$13  = \$9  & \$11 ;
   assign \$15  = video_x_count >= 3'h4;
-  assign \$17  = video_x_count < 9'h194;
+  assign \$17  = video_x_count < 9'h16c;
   assign \$19  = \$15  & \$17 ;
-  assign \$21  = video_y_count >= 5'h1d;
+  assign \$21  = video_y_count >= 5'h1e;
   assign \$23  = \$19  & \$21 ;
-  assign \$25  = video_y_count < 9'h15d;
+  assign \$25  = video_y_count < 9'h186;
   assign \$27  = \$23  & \$25 ;
-  assign \$29  = video_x_count < video_y_count;
-  assign \$31  = + video_x_count;
-  assign \$33  = 9'h13f - video_y_count;
-  assign \$35  = $signed(\$31 ) < $signed(\$33 );
-  assign \$37  = video_x_count < 8'hc8;
-  assign \$3  = video_x_count == 9'h194;
-  assign \$39  = video_y_count < 8'ha0;
-  assign \$41  = + cont1_key_latch[0];
-  assign \$43  = + cont1_key_latch[1];
-  assign \$45  = + cont1_key_latch[2];
-  assign \$47  = + cont1_key_latch[3];
-  assign \$49  = + cont1_key_latch[4];
-  assign \$51  = + cont1_key_latch[5];
-  assign \$53  = + cont1_key_latch[6];
-  assign \$55  = + cont1_key_latch[7];
-  assign \$57  = + cont1_key_latch[8];
+  assign \$29  = video_x_count - 3'h4;
+  assign \$31  = video_y_count - 5'h1e;
+  assign \$33  = $signed(\$29 ) < $signed(\$31 );
+  assign \$35  = video_x_count - 3'h4;
+  assign \$37  = 9'h185 - video_y_count;
+  assign \$3  = video_x_count == 9'h16c;
+  assign \$39  = $signed(\$35 ) < $signed(\$37 );
+  assign \$41  = video_x_count < 8'hb8;
+  assign \$43  = video_y_count < 8'hd2;
+  assign \$45  = video_y_count == 2'h3;
+  assign \$47  = video_hsync_stb & \$45 ;
+  assign \$49  = ! video_x_count;
+  assign \$51  = ! video_y_count;
+  assign \$53  = \$49  & \$51 ;
+  assign \$55  = video_x_count == 2'h3;
+  assign \$58  = video_x_count + 1'h1;
   assign \$5  = video_clk_div_stb & \$3 ;
-  assign \$59  = + cont1_key_latch[9];
-  assign \$61  = + cont1_key_latch[14];
-  assign \$63  = + cont1_key_latch[15];
-  assign \$65  = ! video_x_count;
-  assign \$67  = ! video_y_count;
-  assign \$69  = \$65  & \$67 ;
-  assign \$71  = video_x_count == 2'h3;
-  assign \$74  = video_x_count + 1'h1;
-  assign \$76  = video_x_count == 9'h197;
-  assign \$78  = video_x_count == 9'h197;
-  assign \$7  = video_x_count == 9'h195;
-  assign \$81  = video_y_count + 1'h1;
-  assign \$83  = video_y_count == 9'h17a;
-  assign \$86  = audgen_accum + 22'h03c000;
-  assign \$89  = audgen_accum - 22'h0b5464;
-  assign \$91  = $signed(\$89 ) + $signed(23'h03c000);
-  assign \$93  = audgen_accum >= 22'h0b5464;
-  assign \$95  = ~ audgen_mclk;
-  assign \$97  = ~ audgen_slck_count[1];
+  assign \$60  = video_x_count == 9'h16f;
+  assign \$62  = video_x_count == 9'h16f;
+  assign \$65  = video_y_count + 1'h1;
+  assign \$67  = video_y_count == 9'h1a3;
+  assign \$70  = audgen_accum + 22'h03c000;
+  assign \$73  = audgen_accum - 22'h0b5464;
+  assign \$75  = $signed(\$73 ) + $signed(23'h03c000);
+  assign \$77  = audgen_accum >= 22'h0b5464;
+  assign \$7  = video_x_count == 9'h16d;
+  assign \$79  = ~ audgen_mclk;
+  assign \$81  = ~ audgen_slck_count[1];
+  assign \$83  = ~ audgen_mclk;
+  assign \$85  = audgen_mclk_stb & \$83 ;
+  assign \$87  = audgen_slck_count == 2'h2;
+  assign \$89  = ~ audgen_mclk;
+  assign \$91  = audgen_mclk_stb & \$89 ;
+  assign \$94  = audgen_slck_count + 1'h1;
+  assign \$96  = ~ audgen_mclk;
+  assign \$98  = audgen_mclk_stb & \$96 ;
   \amaranth_core.video_clk_div  video_clk_div (
     .clk(\clk$1 ),
     .\clk$1 (video_clk_div_clk),
@@ -286,38 +274,25 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
     \red_region$next  = red_region;
     casez (video_clk_div_stb)
       1'h1:
-        begin
           (* full_case = 32'd1 *)
           casez (bottom_left_diag)
             1'h1:
                 (* full_case = 32'd1 *)
                 casez (top_left_diag)
-                endcase
-            default:
-                (* full_case = 32'd1 *)
-                casez (top_left_diag)
-                endcase
-          endcase
-          (* full_case = 32'd1 *)
-          casez (left_half)
-            1'h1:
-                (* full_case = 32'd1 *)
-                casez (top_half)
                   1'h1:
-                      \red_region$next  = 2'h0;
+                      \red_region$next  = 2'h1;
                   default:
                       \red_region$next  = 2'h2;
                 endcase
             default:
                 (* full_case = 32'd1 *)
-                casez (top_half)
+                casez (top_left_diag)
                   1'h1:
-                      \red_region$next  = 2'h1;
+                      \red_region$next  = 2'h0;
                   default:
                       \red_region$next  = 2'h3;
                 endcase
           endcase
-        end
     endcase
     casez (\rst$2 )
       1'h1:
@@ -356,8 +331,38 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
   end
   always @* begin
     if (\$auto$verilog_backend.cc:2083:dump_module$1 ) begin end
+    \green_region$next  = green_region;
+    casez (video_clk_div_stb)
+      1'h1:
+          (* full_case = 32'd1 *)
+          casez (left_half)
+            1'h1:
+                (* full_case = 32'd1 *)
+                casez (top_half)
+                  1'h1:
+                      \green_region$next  = 2'h0;
+                  default:
+                      \green_region$next  = 2'h2;
+                endcase
+            default:
+                (* full_case = 32'd1 *)
+                casez (top_half)
+                  1'h1:
+                      \green_region$next  = 2'h1;
+                  default:
+                      \green_region$next  = 2'h3;
+                endcase
+          endcase
+    endcase
+    casez (\rst$2 )
+      1'h1:
+          \green_region$next  = 2'h0;
+    endcase
+  end
+  always @* begin
+    if (\$auto$verilog_backend.cc:2083:dump_module$1 ) begin end
     \cont1_key_latch$next  = cont1_key_latch;
-    casez (video_vsync_stb)
+    casez (\$47 )
       1'h1:
           \cont1_key_latch$next  = cont1_key;
     endcase
@@ -379,35 +384,35 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
                 (* full_case = 32'd1 *)
                 casez (red_region)
                   2'h0:
-                      \video_rgb$next [23:16] = \$41 ;
+                      \video_rgb$next [23:16] = { cont1_key_latch[0], cont1_key_latch[0], cont1_key_latch[0], cont1_key_latch[0], cont1_key_latch[0], cont1_key_latch[0], cont1_key_latch[0], cont1_key_latch[0] };
                   2'h2:
-                      \video_rgb$next [23:16] = \$43 ;
+                      \video_rgb$next [23:16] = { cont1_key_latch[1], cont1_key_latch[1], cont1_key_latch[1], cont1_key_latch[1], cont1_key_latch[1], cont1_key_latch[1], cont1_key_latch[1], cont1_key_latch[1] };
                   2'h1:
-                      \video_rgb$next [23:16] = \$45 ;
+                      \video_rgb$next [23:16] = { cont1_key_latch[2], cont1_key_latch[2], cont1_key_latch[2], cont1_key_latch[2], cont1_key_latch[2], cont1_key_latch[2], cont1_key_latch[2], cont1_key_latch[2] };
                   2'h3:
-                      \video_rgb$next [23:16] = \$47 ;
+                      \video_rgb$next [23:16] = { cont1_key_latch[3], cont1_key_latch[3], cont1_key_latch[3], cont1_key_latch[3], cont1_key_latch[3], cont1_key_latch[3], cont1_key_latch[3], cont1_key_latch[3] };
                 endcase
                 (* full_case = 32'd1 *)
                 casez (blue_region)
                   2'h3:
-                      \video_rgb$next [7:0] = \$49 ;
+                      \video_rgb$next [7:0] = { cont1_key_latch[4], cont1_key_latch[4], cont1_key_latch[4], cont1_key_latch[4], cont1_key_latch[4], cont1_key_latch[4], cont1_key_latch[4], cont1_key_latch[4] };
                   2'h2:
-                      \video_rgb$next [7:0] = \$51 ;
+                      \video_rgb$next [7:0] = { cont1_key_latch[5], cont1_key_latch[5], cont1_key_latch[5], cont1_key_latch[5], cont1_key_latch[5], cont1_key_latch[5], cont1_key_latch[5], cont1_key_latch[5] };
                   2'h0:
-                      \video_rgb$next [7:0] = \$53 ;
+                      \video_rgb$next [7:0] = { cont1_key_latch[6], cont1_key_latch[6], cont1_key_latch[6], cont1_key_latch[6], cont1_key_latch[6], cont1_key_latch[6], cont1_key_latch[6], cont1_key_latch[6] };
                   2'h1:
-                      \video_rgb$next [7:0] = \$55 ;
+                      \video_rgb$next [7:0] = { cont1_key_latch[7], cont1_key_latch[7], cont1_key_latch[7], cont1_key_latch[7], cont1_key_latch[7], cont1_key_latch[7], cont1_key_latch[7], cont1_key_latch[7] };
                 endcase
                 (* full_case = 32'd1 *)
                 casez (green_region)
                   2'h0:
-                      \video_rgb$next [15:8] = \$57 ;
+                      \video_rgb$next [15:8] = { cont1_key_latch[8], cont1_key_latch[8], cont1_key_latch[8], cont1_key_latch[8], cont1_key_latch[8], cont1_key_latch[8], cont1_key_latch[8], cont1_key_latch[8] };
                   2'h1:
-                      \video_rgb$next [15:8] = \$59 ;
+                      \video_rgb$next [15:8] = { cont1_key_latch[9], cont1_key_latch[9], cont1_key_latch[9], cont1_key_latch[9], cont1_key_latch[9], cont1_key_latch[9], cont1_key_latch[9], cont1_key_latch[9] };
                   2'h2:
-                      \video_rgb$next [15:8] = \$61 ;
+                      \video_rgb$next [15:8] = { cont1_key_latch[14], cont1_key_latch[14], cont1_key_latch[14], cont1_key_latch[14], cont1_key_latch[14], cont1_key_latch[14], cont1_key_latch[14], cont1_key_latch[14] };
                   2'h3:
-                      \video_rgb$next [15:8] = \$63 ;
+                      \video_rgb$next [15:8] = { cont1_key_latch[15], cont1_key_latch[15], cont1_key_latch[15], cont1_key_latch[15], cont1_key_latch[15], cont1_key_latch[15], cont1_key_latch[15], cont1_key_latch[15] };
                 endcase
               end
           endcase
@@ -423,7 +428,7 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
     \video_vs$next  = video_vs;
     casez (video_clk_div_stb)
       1'h1:
-          \video_vs$next  = \$69 ;
+          \video_vs$next  = \$53 ;
     endcase
     casez (\rst$2 )
       1'h1:
@@ -435,7 +440,7 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
     \video_hs$next  = video_hs;
     casez (video_clk_div_stb)
       1'h1:
-          \video_hs$next  = \$71 ;
+          \video_hs$next  = \$55 ;
     endcase
     casez (\rst$2 )
       1'h1:
@@ -448,8 +453,8 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
     casez (video_clk_div_stb)
       1'h1:
         begin
-          \video_x_count$next  = \$74 [9:0];
-          casez (\$76 )
+          \video_x_count$next  = \$58 [9:0];
+          casez (\$60 )
             1'h1:
                 \video_x_count$next  = 10'h000;
           endcase
@@ -465,11 +470,11 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
     \video_y_count$next  = video_y_count;
     casez (video_clk_div_stb)
       1'h1:
-          casez (\$78 )
+          casez (\$62 )
             1'h1:
               begin
-                \video_y_count$next  = \$81 [9:0];
-                casez (\$83 )
+                \video_y_count$next  = \$65 [9:0];
+                casez (\$67 )
                   1'h1:
                       \video_y_count$next  = 10'h000;
                 endcase
@@ -495,10 +500,10 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
   end
   always @* begin
     if (\$auto$verilog_backend.cc:2083:dump_module$1 ) begin end
-    \audgen_accum$next  = \$86 [21:0];
+    \audgen_accum$next  = \$70 [21:0];
     casez (audgen_mclk_stb)
       1'h1:
-          \audgen_accum$next  = \$91 [21:0];
+          \audgen_accum$next  = \$75 [21:0];
     endcase
     casez (\rst$2 )
       1'h1:
@@ -510,7 +515,7 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
     \audgen_mclk$next  = audgen_mclk;
     casez (audgen_mclk_stb)
       1'h1:
-          \audgen_mclk$next  = \$95 ;
+          \audgen_mclk$next  = \$79 ;
     endcase
     casez (\rst$2 )
       1'h1:
@@ -520,9 +525,9 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
   always @* begin
     if (\$auto$verilog_backend.cc:2083:dump_module$1 ) begin end
     \audgen_slck_update$next  = 1'h0;
-    casez (\$101 )
+    casez (\$85 )
       1'h1:
-          casez (\$103 )
+          casez (\$87 )
             1'h1:
                 \audgen_slck_update$next  = 1'h1;
           endcase
@@ -535,9 +540,9 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
   always @* begin
     if (\$auto$verilog_backend.cc:2083:dump_module$1 ) begin end
     \audgen_slck_count$next  = audgen_slck_count;
-    casez (\$107 )
+    casez (\$91 )
       1'h1:
-          \audgen_slck_count$next  = \$110 [1:0];
+          \audgen_slck_count$next  = \$94 [1:0];
     endcase
     casez (\rst$2 )
       1'h1:
@@ -547,9 +552,9 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
   always @* begin
     if (\$auto$verilog_backend.cc:2083:dump_module$1 ) begin end
     \audgen_lrck_count$next  = audgen_lrck_count;
-    casez (\$114 )
+    casez (\$98 )
       1'h1:
-          \audgen_lrck_count$next  = \$117 [7:0];
+          \audgen_lrck_count$next  = \$101 [7:0];
     endcase
     casez (\rst$2 )
       1'h1:
@@ -561,7 +566,7 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
     audgen_word_update_stb = 1'h0;
     casez (audgen_slck_update)
       1'h1:
-          casez (\$119 )
+          casez (\$103 )
             1'h1:
                 audgen_word_update_stb = 1'h1;
           endcase
@@ -575,13 +580,12 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
           audgen_bit_update_stb = 1'h1;
     endcase
   end
-  assign \$73  = \$74 ;
-  assign \$80  = \$81 ;
-  assign \$85  = \$86 ;
-  assign \$88  = \$91 ;
-  assign \$109  = \$110 ;
-  assign \$116  = \$117 ;
-  assign green_region = 2'h0;
+  assign \$57  = \$58 ;
+  assign \$64  = \$65 ;
+  assign \$69  = \$70 ;
+  assign \$72  = \$75 ;
+  assign \$93  = \$94 ;
+  assign \$100  = \$101 ;
   assign audio_lrck = audgen_lrck;
   assign audio_dac = audgen_dac;
   assign audio_mclk = audgen_mclk;
@@ -590,13 +594,13 @@ module amaranth_core(audio_dac, audio_lrck, audio_mclk, clk, cont1_joy, cont1_ke
   assign audgen_channel_internal = audgen_lrck_count[5:2];
   assign audgen_channel_select = audgen_lrck;
   assign audgen_lrck = audgen_lrck_count[7];
-  assign audgen_slck = \$97 ;
-  assign audgen_mclk_stb = \$93 ;
+  assign audgen_slck = \$81 ;
+  assign audgen_mclk_stb = \$77 ;
   assign audgen_dac = 1'h0;
-  assign top_half = \$39 ;
-  assign left_half = \$37 ;
-  assign top_left_diag = \$35 ;
-  assign bottom_left_diag = \$29 ;
+  assign top_half = \$43 ;
+  assign left_half = \$41 ;
+  assign top_left_diag = \$39 ;
+  assign bottom_left_diag = \$33 ;
   assign video_active = \$27 ;
   assign video_vsync_stb = \$13 ;
   assign video_hsync_stb = \$5 ;
