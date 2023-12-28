@@ -122,12 +122,12 @@ class AppToplevel(Toplevel):
                 with m.Switch(render_state):
                     with m.Case(RenderState.TOP): # Red
                         m.d.sync += rgb(0xFF, 0, 0)
-                    with m.Case(RenderState.BOTTOM): # Yellow
-                        m.d.sync += rgb(0xFF, 0xFF, 0x80)
+                    with m.Case(RenderState.BOTTOM): # Blue
+                        m.d.sync += rgb(0, 0, 0xFF)
                     with m.Case(RenderState.LEFT): # Green
                         m.d.sync += rgb(0, 0xFF, 0)
-                    with m.Case(RenderState.RIGHT): # Blue
-                        m.d.sync += rgb(0, 0, 0xFF)
+                    with m.Case(RenderState.RIGHT): # Yellow
+                        m.d.sync += rgb(0xFF, 0xFF, 0x80)
                     for [case, flash_on, invert] in [[RenderState.CURRENT, current_flash_on, 0x0], [RenderState.NEXT, next_flash_on, 0xFFFFFF]]:
                         with m.Case(case):
                             with m.If(flash_on): # Remaining pixels, alternate black
