@@ -1,6 +1,7 @@
 # "Business logic" / Game logic / App logic
 
 from amaranth import *
+from amaranth.utils import bits_for
 from amaranth.lib import wiring, data
 from amaranth.lib.wiring import In, Out
 import enum
@@ -13,6 +14,7 @@ DEBUG_NO_OPENING_PAUSE = False
 DEBUG_NO_CONTROLS = False
 
 AUDIO_DIVISOR_BITS = 2
+AUDIO_COARSE = False # If true, only transition between audio "lines" at screen boundary.
 SPEED_LEVELS = 8
 SPEED_INITIAL = 1 # 0 index
 
@@ -42,6 +44,9 @@ class AppToplevel(Toplevel):
         topline_state = Signal(VID_H_ACTIVE, reset=line_reset_value)
         active_state = Signal(VID_H_ACTIVE, reset=line_reset_value)
         audgen_state = Signal(VID_H_ACTIVE, reset=line_reset_value)
+        if AUDIO_COARSE:
+            audgen_state_next = Signal(VID_H_ACTIVE, reset=line_reset_value)
+            audgen_state_remain = Signal(bits_for(VID_H_ACTIVE-1), reset=VID_H_ACTIVE-1)
         need_topline_copy = Signal(1) # Fires at variable time-- copy topline to active
         need_topline_backcopy = Signal(1) # Fires 1 cycle after first-row hsync-- copy active to topline
 
@@ -327,7 +332,8 @@ class AppToplevel(Toplevel):
                 # Set audio state and new active state from most recent topline state
                 with m.If(~frame_frozen): # Notice frozen for *just-finished* frame
                     m.d.sync += [
-                        audgen_state.eq(topline_state),
+                        (audgen_state_next if AUDIO_COARSE else audgen_state)
+                            .eq(topline_state),
                     ]
 
         with m.If(need_topline_copy): # Do last because can be driven multiple ways
@@ -367,6 +373,14 @@ class AppToplevel(Toplevel):
             with m.If(~(video_pixel_stb & video_vsync_stb)): # Don't collide with end-of-screen copy
                 with m.If(audio_divide_stb):
                     m.d.sync += audgen_state.eq( audgen_state.rotate_right(1) ) # After playing a bit, move to the next bit
+                    if AUDIO_COARSE:
+                        with m.If(audgen_state_remain == 0):
+                            m.d.sync += [
+                                audgen_state_remain.eq(audgen_state_remain.reset),
+                                audgen_state.eq(audgen_state_next)
+                            ]
+                        with m.Else():
+                            m.d.sync += audgen_state_remain.eq(audgen_state_remain-1)
 
                 if AUDIO_DIVISOR_BITS>0:
                     m.d.sync += audio_divide_counter.eq( audio_divide_counter+1 )
