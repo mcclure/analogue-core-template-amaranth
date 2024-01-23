@@ -50,8 +50,8 @@ class AppToplevel(Toplevel):
         need_topline_copy = Signal(1) # Fires at variable time-- copy topline to active
         need_topline_backcopy = Signal(1) # Fires 1 cycle after first-row hsync-- copy active to topline
 
-        # CA control mechanics
-        frame_frozen = Signal(1, reset=0 if DEBUG_NO_OPENING_PAUSE else 1)
+        # CA control mechanics -- on NO_OPENING_PAUSE start frozen then unfreeze immediately
+        frame_frozen = Signal(1, reset=1)
 
         # Initial pause
         opening_countdown_timer_reset_value = ((1<<6)-1)
