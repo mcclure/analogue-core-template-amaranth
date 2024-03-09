@@ -11,7 +11,7 @@ from .app_toplevel import AppToplevel
 def simulate():
     from amaranth.sim import Simulator
 
-    sim = Simulator(AppToplevel())
+    sim = Simulator(AppToplevel(sim_no_opening_pause=True))
     sim.add_clock(1/74.25e6)
     with sim.write_vcd("dump.vcd"):
         sim.run_until(21e-3, run_passive=True)
@@ -21,7 +21,7 @@ def capture_frame():
     import png
     from amaranth.sim import Simulator
 
-    top = AppToplevel()
+    top = AppToplevel(sim_no_opening_pause=True)
     def bench():
         written = 0
         for _frame in range(2):
@@ -67,7 +67,7 @@ def capture_wav():
     SHRT_MAX = 32767 # No python library source for this?
     USHRT_CONVERT = 1<<16
 
-    top = AppToplevel()
+    top = AppToplevel(sim_no_opening_pause=True)
     def bench():
         written = 0
         last_printed = 0

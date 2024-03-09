@@ -289,7 +289,7 @@ module amaranth_core(rst, init_done, user1, user2, dbg_tx, dbg_rx, video_rgb_clk
   reg \need_topline_backcopy$next ;
   reg need_topline_copy = 1'h0;
   reg \need_topline_copy$next ;
-  reg [5:0] opening_countdown_timer = 6'h3f;
+  reg [5:0] opening_countdown_timer = 6'h00;
   reg [5:0] \opening_countdown_timer$next ;
   reg opening_countdown_timer_late_reset = 1'h0;
   reg \opening_countdown_timer_late_reset$next ;
@@ -550,7 +550,7 @@ module amaranth_core(rst, init_done, user1, user2, dbg_tx, dbg_rx, video_rgb_clk
     if (\rst$2 ) need_topline_copy <= 1'h0;
     else need_topline_copy <= \need_topline_copy$next ;
   always @(posedge \clk$1 , posedge \rst$2 )
-    if (\rst$2 ) opening_countdown_timer <= 6'h3f;
+    if (\rst$2 ) opening_countdown_timer <= 6'h00;
     else opening_countdown_timer <= \opening_countdown_timer$next ;
   always @(posedge \clk$1 , posedge \rst$2 )
     if (\rst$2 ) audgen_state <= 160'h0000000000000000000100000000000000000000;
@@ -4367,7 +4367,7 @@ module amaranth_core(rst, init_done, user1, user2, dbg_tx, dbg_rx, video_rgb_clk
     endcase
     casez (\rst$2 )
       1'h1:
-          \opening_countdown_timer$next  = 6'h3f;
+          \opening_countdown_timer$next  = 6'h00;
     endcase
   end
   always @* begin

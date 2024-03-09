@@ -30,12 +30,20 @@ AUTO_DEFAULT = 0
 #     - audio_dac_out (always)
 #     - video_rgb_out (when video_active)
 class AppToplevel(Toplevel):
+
+    def __init__(self, sim_no_opening_pause = False):
+        super().__init__()
+
+        self.sim_no_opening_pause = sim_no_opening_pause
+
     def app_elaborate(self, platform, m,
             video_pixel_stb, video_hsync_stb, video_vsync_stb, video_x_count, video_y_count,  video_x_active, video_y_active, video_active, video_docked, video_rgb_out,
             audio_silenced, audio_channel_select, audio_channel_internal, audio_bit_update_stb, audio_word_update_stb, audio_dac_out):
         # App: Rule 30?
 
         # Setup
+
+        no_opening_pause = DEBUG_NO_OPENING_PAUSE or self.sim_no_opening_pause
 
         # CA mechanics
         # Note: In current design, video_x_active is disregarded and VID_H_ACTIVE is read directly, on assumption VID_H_ACTIVE constant.
@@ -55,7 +63,7 @@ class AppToplevel(Toplevel):
 
         # Initial pause
         opening_countdown_timer_reset_value = ((1<<6)-1)
-        opening_countdown_timer = Signal(6, reset=0 if DEBUG_NO_OPENING_PAUSE else opening_countdown_timer_reset_value)
+        opening_countdown_timer = Signal(6, reset=0 if no_opening_pause else opening_countdown_timer_reset_value)
         opening_wants_frozen = Signal(1)
         opening_countdown_timer_late_reset = Signal(1)
 
