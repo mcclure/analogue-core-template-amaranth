@@ -137,37 +137,22 @@ class AppToplevel(Toplevel):
 
         # Audio
 
-        audio_high = Signal(1)       # High when square wave high (1 bit dac effectively)
-        audio_output_word_bit = Signal(1) # As audio_channel_internal increments scrolls through bits 0b0000011111111111, MSB first
-
-        audgen_osc_phase = Signal(7)  # Counter for square wave
-        audgen_osc_wave = Signal(5)   # Counter for square waves on octaves C2 through C6 inclusive (msb is C2, lsb is C6)
-        audgen_osc_wave_select = Signal(4) # Which bit in audio_osc_wave to output?
-
-        m.d.comb += audio_output_word_bit.eq(audio_channel_internal <= 5) # 1 bit dac state
-
-        m.d.comb += audgen_osc_wave_select.eq( 4-(rotate1_counter + (rotate2_counter == 3)) ) # Video state
+        A440_OFFSET = 600
+        SIGNAL_DOWNBITS = 3
+        audgen_osc_saw = Signal(16)
+        audgen_osc_out = Signal(16)
 
         with m.If(audio_bit_update_stb):
             # Convert above state logic to a waveform—- alternate 0b0000011111111111 and 0b1111100000000000 words
-            m.d.sync += audio_dac_out.eq( Mux(audio_silenced, 0, audio_output_word_bit ^ audio_high) )
+            m.d.sync += [
+                audio_dac_out.eq( audgen_osc_out[15] ),
+                audgen_osc_out.eq( audgen_osc_out << 1 )
+            ]
 
         with m.If(audio_word_update_stb):
-            # Audio generation user logic
-            with m.If(audgen_osc_phase < 46): # Alternating every 46 stereo samples gets us on average a wave-cycle every 46 audio frames ~= 1046.5hz = C6
-                m.d.sync += audgen_osc_phase.eq( audgen_osc_phase + 1 )
-            with m.Else():
-                m.d.sync += [
-                    audgen_osc_phase.eq( 1 ), # note audgen_osc_phase is currently EQUAL to 46
-                    audgen_osc_wave.eq( audgen_osc_wave + 1 ),
-
-                    # Set square wave high or low by selecting an octave from the osc_wave bitstring
-                    # Pattern is C2 C3 C4 C5, C2 C3 C4 C5, C2 C3 C4 C5, C3 C4 C5 C6
-                    # Notice crossing streams: Which octave we select is based on the *graphics* state
-                    # Also notice msb is lowest frequency so we want to count from msb to lsb 
-                    audio_high.eq( audgen_osc_wave.bit_select( audgen_osc_wave_select , 1 ) )
-                ]
-
+            m.d.sync += audgen_osc_out.eq(audgen_osc_saw >> SIGNAL_DOWNBITS)
+            with m.If(~audio_channel_select):
+                m.d.sync += audgen_osc_saw.eq(audgen_osc_saw + 1)
 
 def simulate():
     from amaranth.sim import Simulator

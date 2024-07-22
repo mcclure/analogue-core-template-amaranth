@@ -18,7 +18,6 @@ def simulate():
 
 
 def capture_frame():
-    import soundfile
     from amaranth.sim import Simulator
 
     top = AppToplevel()
