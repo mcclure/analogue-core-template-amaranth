@@ -24,7 +24,7 @@ module amaranth_core(rst, user2, dbg_rx, audio_adc, cont1_key, cont2_key, cont3_
   wire \$26 ;
   wire \$27 ;
   wire [10:0] \$28 ;
-  wire [7:0] \$29 ;
+  wire [8:0] \$29 ;
   wire \$3 ;
   wire \$30 ;
   wire [2:0] \$31 ;
@@ -89,6 +89,7 @@ module amaranth_core(rst, user2, dbg_rx, audio_adc, cont1_key, cont2_key, cont3_
   reg \$85 ;
   reg [1:0] \$86 ;
   reg [7:0] \$87 ;
+  wire [1:0] \$88 ;
   wire \$9 ;
   wire [23:0] \$auto$rtlil.cc:2485:Not$2 ;
   reg [5:0] animation_counter = 6'h00;
@@ -198,26 +199,27 @@ module amaranth_core(rst, user2, dbg_rx, audio_adc, cont1_key, cont2_key, cont3_
   wire video_vsync_stb;
   reg [9:0] video_x_count = 10'h000;
   reg [9:0] video_y_count = 10'h000;
+  assign \$10  = video_y_count < 9'h1e4;
   assign video_active = \$9  & \$10 ;
   assign \$11  = 2'h3 - rotate2_counter;
-  assign \$12  = video_y_count >= 5'h1d;
-  assign \$13  = 5'h1d + \$11 [1:0];
+  assign \$12  = video_y_count >= 3'h4;
+  assign \$13  = 3'h4 + \$11 [1:0];
   assign \$14  = video_y_count <= \$13 ;
   assign \$15  = \$12  & \$14 ;
-  assign \$16  = video_y_count <= 9'h10c;
-  assign \$17  = 9'h10c - \$11 [1:0];
+  assign \$16  = video_y_count <= 9'h1e3;
+  assign \$17  = 9'h1e3 - \$11 [1:0];
   assign \$18  = $signed({ 1'h0, video_y_count }) >= $signed(\$17 );
   assign \$19  = \$16  & \$18 ;
   assign \$20  = video_x_count >= 3'h4;
   assign \$21  = 3'h4 + \$11 [1:0];
   assign \$22  = video_x_count <= \$21 ;
   assign \$23  = \$20  & \$22 ;
-  assign \$24  = video_x_count <= 9'h143;
-  assign \$25  = 9'h143 - \$11 [1:0];
+  assign \$24  = video_x_count <= 10'h283;
+  assign \$25  = 10'h283 - \$11 [1:0];
   assign \$26  = $signed({ 1'h0, video_x_count }) >= $signed(\$25 );
   assign \$27  = \$24  & \$26 ;
-  assign \$28  = video_y_count - 5'h1d;
-  assign \$29  = animation_counter * 2'h3;
+  assign \$28  = video_y_count - 3'h4;
+  assign \$29  = animation_counter * 3'h7;
   assign \$30  = $signed(\$28 ) > $signed({ 1'h0, \$29  });
   assign \$31  = rotate1_counter + 1'h1;
   assign \$32  = rotate1_counter[0] ^ rotate2_counter[0];
@@ -246,9 +248,9 @@ module amaranth_core(rst, user2, dbg_rx, audio_adc, cont1_key, cont2_key, cont3_
   assign \$53  = \$51  & \$52 ;
   assign \$54  = video_x_count == 2'h3;
   assign \$55  = video_x_count + 1'h1;
-  assign \$56  = video_x_count == 9'h197;
+  assign \$56  = video_x_count == 10'h287;
   assign \$57  = video_y_count + 1'h1;
-  assign \$58  = video_y_count == 9'h17a;
+  assign \$58  = video_y_count == 9'h1e7;
   assign \$59  = audgen_accum + 18'h3c000;
   assign \$60  = ~ audio_mclk;
   assign \$61  = audgen_accum - 20'hb5464;
@@ -316,23 +318,21 @@ module amaranth_core(rst, user2, dbg_rx, audio_adc, cont1_key, cont2_key, cont3_
   always @(posedge clk, posedge rst)
     if (rst) audgen_lrck_count <= 8'h00;
     else audgen_lrck_count <= \$87 ;
-  assign \$1  = video_x_count == 9'h197;
+  assign \$1  = video_x_count == 10'h287;
   assign video_hsync_stb = stb & \$1 ;
-  assign \$2  = video_x_count == 9'h197;
+  assign \$2  = video_x_count == 10'h287;
   assign \$3  = stb & \$2 ;
-  assign \$4  = video_y_count == 9'h17a;
+  assign \$4  = video_y_count == 9'h1e7;
   assign video_vsync_stb = \$3  & \$4 ;
   assign \$5  = video_x_count >= 3'h4;
-  assign \$6  = video_x_count < 9'h144;
+  assign \$6  = video_x_count < 10'h284;
   assign \$7  = \$5  & \$6 ;
-  assign \$8  = video_y_count >= 5'h1d;
+  assign \$8  = video_y_count >= 3'h4;
   assign \$9  = \$7  & \$8 ;
-  assign \$10  = video_y_count < 9'h10d;
   assign \$auto$rtlil.cc:2485:Not$2  = ~ flash_color;
   \amaranth_core.video_clk_div  video_clk_div (
     .clk(clk),
-    .\clk$4 (video_rgb_clk),
-    .clk90(video_rgb_clk90),
+    .\port$183$0 (\$88 ),
     .rst(rst),
     .stb(stb)
   );
@@ -610,8 +610,8 @@ module amaranth_core(rst, user2, dbg_rx, audio_adc, cont1_key, cont2_key, cont3_
   assign boot_clk = clk;
   assign \clk$31  = clk;
   assign \rst$32  = rst;
-  assign \clk$33  = video_rgb_clk;
-  assign clk90 = video_rgb_clk90;
+  assign \clk$33  = \$88 [0];
+  assign clk90 = \$88 [1];
   assign rotate2_counter_anti = \$11 [1:0];
   assign current_color_id = \$31 [1:0];
   assign next_color_id = rotate1_counter;
@@ -624,6 +624,8 @@ module amaranth_core(rst, user2, dbg_rx, audio_adc, cont1_key, cont2_key, cont3_
   assign audgen_dac = audio_dac;
   assign user1 = 1'h0;
   assign dbg_tx = 1'h0;
+  assign video_rgb_clk = \$88 [0];
+  assign video_rgb_clk90 = \$88 [1];
   assign video_skip = 1'h0;
   assign audio_lrck = audgen_lrck_count[7];
   assign \video_rgb.b  = video_rgb[7:0];
@@ -633,26 +635,27 @@ module amaranth_core(rst, user2, dbg_rx, audio_adc, cont1_key, cont2_key, cont3_
   assign \$44  = \$auto$rtlil.cc:2485:Not$2 ;
 endmodule
 
-module \amaranth_core.video_clk_div (rst, \clk$4 , clk90, stb, clk);
+module \amaranth_core.video_clk_div (rst, \port$183$0 , stb, clk);
   input clk;
   wire clk;
-  output \clk$4 ;
   wire \clk$4 ;
-  output clk90;
   wire clk90;
-  reg [7:0] clk_reg = 8'hf0;
+  reg [3:0] clk_reg = 4'hc;
+  output [1:0] \port$183$0 ;
+  wire [1:0] \port$183$0 ;
   input rst;
   wire rst;
   output stb;
   wire stb;
-  reg [7:0] stb_reg = 8'h01;
+  reg [3:0] stb_reg = 4'h1;
   always @(posedge clk, posedge rst)
-    if (rst) clk_reg <= 8'hf0;
-    else clk_reg <= { clk_reg[6:0], clk_reg[7] };
+    if (rst) clk_reg <= 4'hc;
+    else clk_reg <= { clk_reg[2:0], clk_reg[3] };
   always @(posedge clk, posedge rst)
-    if (rst) stb_reg <= 8'h01;
-    else stb_reg <= { stb_reg[6:0], stb_reg[7] };
+    if (rst) stb_reg <= 4'h1;
+    else stb_reg <= { stb_reg[2:0], stb_reg[3] };
   assign \clk$4  = clk_reg[0];
-  assign clk90 = clk_reg[2];
+  assign clk90 = clk_reg[1];
+  assign \port$183$0  = clk_reg[1:0];
   assign stb = stb_reg[0];
 endmodule
