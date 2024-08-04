@@ -8,11 +8,26 @@ import enum
 from .app_toplevel import AppToplevel
 
 
+SIMULATOR_CLOCK = 1/74.25e6
+
+# The normal sim.add_clock() is not compatible with the Analogue pseudo-platform.
+# Given a toplevel, this creates a add_process-compatible pseudo-clock.
+def simulate_fake_clock_factory(top):
+    async def simulate_fake_clock(ctx):
+        clk = True
+        while True:
+            await ctx.delay(SIMULATOR_CLOCK/2)
+            ctx.set(top.clk, clk)
+            clk = not clk
+    return simulate_fake_clock
+
+
 def simulate():
     from amaranth.sim import Simulator
 
-    sim = Simulator(AppToplevel())
-    sim.add_clock(1/74.25e6)
+    top = AppToplevel()
+    sim = Simulator(top)
+    sim.add_process(simulate_fake_clock_factory(top))
     with sim.write_vcd("dump.vcd"):
         sim.run_until(10e-3, run_passive=True)
 
@@ -46,7 +61,7 @@ def capture_frame():
         print(f"{len(rows)} rows")
 
     sim = Simulator(top)
-    sim.add_clock(1/74.25e6)
+    sim.add_process(simulate_fake_clock_factory(top))
     sim.add_sync_process(bench)
     sim.run()
 
@@ -112,7 +127,7 @@ def capture_wav():
                 last_printed = written
 
     sim = Simulator(top)
-    sim.add_clock(1/74.25e6)
+    sim.add_process(simulate_fake_clock_factory(top))
     sim.add_sync_process(bench)
     sim.run()
 
