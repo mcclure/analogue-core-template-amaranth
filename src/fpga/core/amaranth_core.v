@@ -221,7 +221,7 @@ module amaranth_core(rst, user2, dbg_rx, audio_adc, cont1_key, cont2_key, cont3_
   assign \$39  = rotate1_counter == 2'h3;
   assign \$40  = rotate2_counter + 1'h1;
   assign \$45  = ~ audgen_lrck_count[7];
-  assign \$46  = audgen_osc_saw + 1'h1;
+  assign \$46  = audgen_osc_saw + 10'h258;
   assign \$47  = ! video_x_count;
   assign \$48  = ! video_y_count;
   assign \$49  = \$47  & \$48 ;

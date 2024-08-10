@@ -152,4 +152,4 @@ class AppToplevel(Toplevel):
         with m.If(audio_word_update_stb):
             m.d.sync += audgen_osc_out.eq(audgen_osc_saw >> SIGNAL_DOWNBITS)
             with m.If(~audio_channel_select):
-                m.d.sync += audgen_osc_saw.eq(audgen_osc_saw + 1)
+                m.d.sync += audgen_osc_saw.eq(audgen_osc_saw + A440_OFFSET)
