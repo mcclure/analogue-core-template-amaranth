@@ -33,26 +33,28 @@ def simulate():
 
 
 def capture_frame():
+    import png
     from amaranth.sim import Simulator
 
     top = AppToplevel()
     async def bench(ctx):
         written = 0
+        rows = []
         while True:
             # await ctx.edge(top.clk, True)
             cols = []
             await ctx.tick().until(top.video_hs)
             await ctx.tick().until(top.video_vs | top.video_de)
-            if await ctx.get(top.video_vs): # Frame complete
+            if ctx.get(top.video_vs): # Frame complete
                 break
             while True:
                 await ctx.tick().until(~top.video_rgb_clk90)
-                await ct.until(top.video_rgb_clk90)
+                await ctx.tick().until(top.video_rgb_clk90)
                 # at posedge of clk90
-                if await ctx.get(top.video_de):
-                    cols.append(await ctx.get(top.video_rgb.r))
-                    cols.append(await ctx.get(top.video_rgb.g))
-                    cols.append(await ctx.get(top.video_rgb.b))
+                if ctx.get(top.video_de):
+                    cols.append(ctx.get(top.video_rgb.r))
+                    cols.append(ctx.get(top.video_rgb.g))
+                    cols.append(ctx.get(top.video_rgb.b))
                 else:
                     break
             print(f"row {len(rows)}: {len(cols) // 3} cols")
@@ -63,7 +65,7 @@ def capture_frame():
 
     sim = Simulator(top)
     sim.add_process(simulate_fake_clock_factory(top))
-    sim.add_process(bench)
+    sim.add_testbench(bench)
     sim.run()
 
 
@@ -96,12 +98,12 @@ def capture_wav():
 
                     for _ in range(16):
                         sample <<= 1
-                        sample |= await ctx.get(top.audio_dac)
-                        lrck = await ctx.get(top.audio_lrck)
+                        sample |= ctx.get(top.audio_dac)
+                        lrck = ctx.get(top.audio_lrck)
                         assert lrck == channel, f"Unexpected lrck [channel select] value (wanted {channel}, got {lrck})"
                         for _ in range(4): # Serial step
-                            await ctx.tick().until(~top.audio.mclk)
-                            await ctx.tick().until(top.audio.mclk)
+                            await ctx.tick().until(~top.audio_mclk)
+                            await ctx.tick().until(top.audio_mclk)
 
                     if sample > SHRT_MAX: # Reinterpret unsigned as signed
                         sample -= USHRT_CONVERT
@@ -109,8 +111,8 @@ def capture_wav():
 
                     for _ in range(16): # Blank space
                         for _ in range(4): # Serial step
-                            await ctx.tick().until(~top.audio.mclk)
-                            await ctx.tick().until(top.audio.mclk)
+                            await ctx.tick().until(~top.audio_mclk)
+                            await ctx.tick().until(top.audio_mclk)
 
                 frames.append(frame)
 
@@ -130,7 +132,7 @@ def capture_wav():
 
     sim = Simulator(top)
     sim.add_process(simulate_fake_clock_factory(top))
-    sim.add_process(bench)
+    sim.add_testbench(bench)
     sim.run()
 
 
